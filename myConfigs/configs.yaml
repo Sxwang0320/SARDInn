@@ -1,0 +1,61 @@
+# logger options
+save_val_it: 3             # how much ite to save the result of val
+eval_epochs : 1          # how much epoch to val
+snapshot_save_iter: 1           # how much epoch to save model
+log_dir: '../'         # Log prefix to save checkpoints
+pretrained:  ''              # Start from specified checkpoint if not ''
+gpu_ids: '7'
+latent_dim : 128
+
+# gft options
+
+num_neb: 5
+
+# optimization options67500
+n_epoch: 100                 # maximum number of training epochs
+batch_size: 10
+weight_decay: 0.01         # weight decay
+beta1: 0.9  #   0.9                 # Adam parameter
+beta2: 0.999                  # Adam parameters
+init: gaussian                # initialization [gaussian/kaiming/xavier/orthogonal]
+lr: 0.00001 # hp.Choice('learning_rate', values = [1e-4, 5e-4, 1e-5, 5e-5, 1e-6])# initial learning rate
+lr_policy: step               # learning rate scheduler
+step_size: [30,100]             # how often to decay learning rate
+gamma: 0.5                    # how much to decay learning rate
+
+
+# MLP options
+MLP_depth: 4
+MLP_width: 256
+MLP_in_dim: 131
+out_dim: 1
+hidden_list: [256,256,256,256]
+weight_mlp: 1000
+# data options
+log_freq: 2
+log_freq_train: 10
+able_grad: 30
+
+num_grad: 90
+local : False
+input_dim: 1                  # number of image channels [1 - 3]
+output_dim: 1
+num_workers: 1               # number of data loading threads
+pad_size: [120,140]              # random crop image size
+data_root: ../Dataset/dataset_h5       # dataroot of training files
+# RND
+G0: 64
+RDNkSize: 3
+laten_dim: 128
+RDNconfig: 'C'
+
+# dataset folder location
+cos: True
+experiment_name: test
+seed: 3407
+dataset:  HCP_denoise  #
+
+
+
+
+

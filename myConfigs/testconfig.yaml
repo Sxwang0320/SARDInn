@@ -1,0 +1,71 @@
+# logger options
+save_val_it: 3             # how much ite to save the result of val
+eval_epochs : 1          # how much epoch to val
+snapshot_save_iter: 1           # how much epoch to save model
+log_dir: '.'         # Log prefix to save checkpoints
+pretrained:  ''              # Start from specified checkpoint if not ''
+gpu_ids: '7'
+latent_dim : 128
+
+# gft options
+
+num_neb: 1
+
+# optimization options67500
+n_epoch: 100                 # maximum number of training epochs
+batch_size: 1
+weight_decay: 0.01         # weight decay
+beta1: 0.9  #   0.9                 # Adam parameter
+beta2: 0.999                  # Adam parameters
+init: gaussian                # initialization [gaussian/kaiming/xavier/orthogonal]
+lr: 0.00001 # hp.Choice('learning_rate', values = [1e-4, 5e-4, 1e-5, 5e-5, 1e-6])# initial learning rate
+lr_policy: step               # learning rate scheduler
+step_size: [30]             # how often to decay learning rate
+gamma: 0.5                    # how much to decay learning rate
+
+
+# autoencoder options
+dim: 48                  # number of filters in the bottommost layer
+activ: elu                 # activation function [relu/lrelu/prelu/selu/tanh]
+n_downsample: 0             # number of downsampling layers in content encoder
+n_res: 6                   # number of residual blocks in content encoder/decoder
+pad_type: reflect           # padding type [zero/reflect]
+g_type: resnet
+n_upsample : 0
+weight_rec: 500
+# MLP options
+MLP_depth: 4
+MLP_width: 256
+MLP_in_dim: 131
+out_dim: 1
+hidden_list: [256,256,256,256]
+weight_mlp: 1000
+# data options
+log_freq: 2
+log_freq_train: 10
+able_grad: 20
+
+num_grad: 90
+local : False
+input_dim: 1                  # number of image channels [1 - 3]
+output_dim: 1
+num_workers: 1               # number of data loading threads
+pad_size: [256, 256]              # random crop image size
+data_root: ../Dataset/dataset_h5       # dataroot of training files
+# RND
+G0: 64
+RDNkSize: 3
+laten_dim: 128
+RDNconfig: 'C'
+
+# dataset folder location
+cos: True
+experiment_name: get_1
+#experiment_name: test_0.5_all_neb
+seed: 3407
+dataset:  HCP_denoise  #
+detail: "。此外，q空间下采样方法总角度，下采样随机下采样，10->20，neb6，特征提取使用rdn的A,，l1损失,增加了x空间信息聚合的两个卷积层，学习率和下降,在MLP中间加了一个sin激活,MLPC中的激活函数都变成了sin“"
+
+
+
+
