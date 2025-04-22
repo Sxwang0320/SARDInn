@@ -2,7 +2,7 @@
 Self-supervised arbitrary-scale super-angular resolution diffusion MRI reconstruction
 url:https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.17691
 
-# HCP数据集，训练集构造方式
+# The construction method of the training set for the Human Connectome Project (HCP) dataset can be translated into English as follows:
 '
 
     import os
@@ -104,7 +104,7 @@ url:https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.17691
 
 
 
-# 直接预测数据集的构造方式
+# The construction method for a test dataset using pre-trained weights for direct reconstruction can be translated into English as follows:
 '
     
     import os
