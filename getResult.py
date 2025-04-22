@@ -53,16 +53,16 @@ def main():
     cun = 60
     # result = h5py.File(f"../../project/Results/myAE_SRRes/debug_MLP_5/images/bvec_diff_6/b2_result_psnr_{cun}.h5py", "w")
     result = h5py.File(f"./Results/result.h5py", "w")
-    data_pre = result.create_dataset('pre', shape=(7,72,6, 145, 174),
+    data_pre = result.create_dataset('pre', shape=(7,72,cun, 145, 174),
                                      chunks=(1,1,1,  145, 174))
-    data_target = result.create_dataset('target', shape=(7,72,6, 145, 174),
+    data_target = result.create_dataset('target', shape=(7,72,cun, 145, 174),
                                      chunks=(1,1,1,  145, 174))
-    data_error = result.create_dataset('error', shape=(7,72,6,  145, 174),
+    data_error = result.create_dataset('error', shape=(7,72,cun,  145, 174),
                                         chunks=(1, 1,1, 145, 174))
-    data_vec = result.create_dataset('bvec', shape=(7,72,6, 4),
+    data_vec = result.create_dataset('bvec', shape=(7,72,cun, 4),
                                        chunks=(1,1,1, 4))
 
-    test_dataset = getTrainData(folder=dataPath, mode='val', num_grad=90, pad_size=(145,174), num_slice=72,config=config)
+    test_dataset = getTrainData(folder=dataPath, mode='val', num_grad=90, grad_able=90-cun,pad_size=(145,174), num_slice=72,config=config)
     data_loader_test = torch.utils.data.DataLoader(dataset=test_dataset,
                                                    batch_size=1, shuffle=False,
                                                    num_workers=num_workers,
