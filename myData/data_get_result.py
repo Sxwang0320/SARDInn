@@ -17,21 +17,15 @@ class getTrainData(Dataset):
     '''
     Dataloader for the proposed framework with q-space augmentation
     '''
-    def __init__(self, folder, mode='train',num_grad=90,num_slice=72,pad_size=(72,80),config=None):
+    def __init__(self, folder, mode='train',num_grad=90,grad_able=30,num_slice=72,pad_size=(72,80),config=None):
         self.mode = mode
         self.config = config
         self.pad_size = pad_size
-        self.grad_able = 20
-        self.num_slice = num_slice
-        self.num_grad = num_grad
-        self.num_neb = 3
+        self.grad_able = grad_able        # 可用bvec数码
+        self.num_slice = num_slice # 每个bvec的DWI数
+        self.num_grad = num_grad   # 全部bvec数目
+        self.num_neb = 10          # 邻域方向数目
         self.key = self.mode
-        # if self.mode=='train':
-        #     self.key = 'train'
-        # elif self.mode=='test':
-        #     print("the main of getTrainData's method can't be applied to Test!")
-        # elif self.mode == 'val':
-        #     print("the main of getTrainData's method can't be applied to Val!")
 
         self.folder = folder
         self.ran=0
@@ -45,8 +39,8 @@ class getTrainData(Dataset):
         print(self.dataset, 'bval max: {}'.format(self.bval_max))
 
     def __getitem__(self, item):
-
-        idx_slice,id_grad = self.ran // 6,self.ran % 6  # the order of slice and grad
+        # self.num_grad-self.grad_able 表示需要重建bvec的数量，
+        idx_slice,id_grad = self.ran // (self.num_grad-self.grad_able), self.ran % (self.num_grad-self.grad_able)  # the order of slice and grad
         self.ran = self.ran + 1  # 更新ran
         hf = h5py.File(self.folder, 'r')
 
@@ -54,18 +48,16 @@ class getTrainData(Dataset):
 
         # 当前实例的所有方向
         cond_all = hf['{}bvec'.format(self.key)][idx_slice]
-        cond_list = get_uniform_downsample_indices(cond_all[:, 1:], 9,0) # 输出选择的点在原始点集中的索引,第一次下采样的索引，用于自监督
-        neb_vec = get_uniform_downsample_indices(cond_all[cond_list, 1:], 3,0) # 输出选择的点在原始点集中的索引，第二次下采样，用于训练
-        neb_vec = [cond_list[val] for i,val in enumerate(neb_vec)] # 取出这10个点在cond_all中的索引
+        cond_list = get_uniform_downsample_indices(cond_all[:, 1:], self.grad_able,0) # 找出可用的bvec索引
 
         # q空间两次下采样均匀采样
-        slice_neb = slice_all[neb_vec] # 训练集中的邻居节点
-
-        pre_list = list(set(cond_list).difference(neb_vec)) # 需要预测的索引
+        slice_neb = slice_all[cond_list] # 训练集中的邻居节点
+        all_index = [i for i in range(0, 90)] # 总的bvec数目
+        pre_list = list(set(all_index).difference(cond_list))  # 需要重建的bvec索引
 
         self.pre_id = pre_list[id_grad]
-        # print("pre_id: ",self.pre_id)
-        slice_pre = slice_all[self.pre_id]  # 训练时的预测节点
+
+        slice_pre = slice_all[self.pre_id]  # 重建目标DWI
 
         # 裁剪图像
 
@@ -77,7 +69,7 @@ class getTrainData(Dataset):
 
         tmp_vec = cond_all[self.pre_id] # 预测方向
 
-        neb_vec = cond_all[neb_vec] # 邻居方向
+        neb_vec = cond_all[cond_list] # 邻居方向
 
 
         neb_vec = np.row_stack((tmp_vec, neb_vec)) # 组成邻接点和目标节点集
@@ -134,5 +126,5 @@ class getTrainData(Dataset):
 
     def __len__(self):
         hf = h5py.File(self.folder, 'r')
-        # print("hf['{}'.format(self.key)].shape[0] ",hf['{}'.format(self.key)].shape[0])
-        return (hf['{}'.format(self.key)].shape[0]) * 6   # 所有训练可用的切片数目
+        print("hf['{}'.format(self.key)].shape[0] ",hf['{}'.format(self.key)].shape[0])
+        return (hf['{}'.format(self.key)].shape[0]) * (self.num_grad - self.grad_able)   # 所有训练可用的切片数目
